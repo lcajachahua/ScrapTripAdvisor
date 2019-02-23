@@ -14,6 +14,7 @@ Extrae_Trip.R
 Script to download the comments, using rvest
 
 
+
 (ESP)
 
 Esta solución permite descargar comentarios de la web de TripAdvisor. Se modificó el código provisto por Hadley Wickham para adaptarlo a la nueva estructura de la web de tripadvisor. 
