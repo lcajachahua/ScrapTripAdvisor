@@ -1,6 +1,7 @@
 # ScrapTripAdvisor
 
 (ENG)
+
 This is the Scraping TripAdvisor Tool. I have modified the Hadley Wickham script to adapt the code for the TripAdvisor website changes.
 https://github.com/hadley/rvest/blob/master/demo/tripadvisor.R
 
@@ -14,6 +15,7 @@ Script to download the comments, using rvest
 
 
 (ESP)
+
 Esta solución permite descargar comentarios de la web de TripAdvisor. Se modificó el código provisto por Hadley Wickham para adaptarlo a la nueva estructura de la web de tripadvisor. 
 https://github.com/hadley/rvest/blob/master/demo/tripadvisor.R
 
