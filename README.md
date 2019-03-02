@@ -1,4 +1,4 @@
-# ScrapTripAdvisor:
+# ScrapTripAdvisor
 
 ## (ENG)
 
