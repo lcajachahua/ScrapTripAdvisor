@@ -1,13 +1,28 @@
+# autor: Luis Cajachahua
+# fecha de actualización: Diciembre, 2020
+
+# Antes de nada, limpiamos el workspace, por si hubiera algún dataset o información cargada
+rm(list = ls())
+
+# Cambiar el directorio de trabajo
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+getwd()
+
+# Limpiamos la consola
+cat("\014")
+
+# Cargamos las librerías que vamos a necesitar
+# install.packages("rvest")
 library(rvest)
 
 ## CODIGO PARA DESCARGA DE COMENTARIOS EN INGLÉS
 
 ## Atractivos en Ingles
 
-lista_eng<-read.csv("C:/Temp/listeng.csv",sep=",", header = T,stringsAsFactors = F)
+lista_eng<-read.csv("listeng.csv",sep=",", header = T,stringsAsFactors = F)
 
 
-## Funcion colec_hotel para Descargar Comentarios de Hoteles
+## Funcion colec_hotel sirve para Descargar Comentarios de Hoteles
 ## La funcion tiene cinco argumentos:
 ## n es el numero de paginas de comentarios
 ## region es la Región del país donde se ubica el atractivo 
@@ -22,30 +37,20 @@ colec_hotel<-function(n,region,atrac,web1,web2) {
   looping<-c(looping,tmp)}
   tableout <- data.frame()
   for(i in looping){url <- paste (web1,i,web2,sep="")
-  reviews <- url %>% read_html() %>% html_nodes("#REVIEWS .listContainer")
-  lugar <- reviews %>% html_nodes(".info_text") %>% html_text()
-  tex1 <- reviews %>% html_nodes(".info_text div") %>% html_text()
-  tex2 <- reviews %>% html_nodes(".userLoc") %>% html_text()
-  usuario <- setdiff(tex1,tex2)
-  tmpx1<-sapply(usuario,nchar)
-  lugar<-substr(lugar,tmpx1+1,tmpx1+30)
-  id <- reviews %>% html_nodes(".quote a") %>% html_attr("id")
-  quote <- reviews %>% html_nodes(".quote span") %>% html_text()
-  rating <- reviews %>% html_nodes(".ui_bubble_rating") %>% html_attrs() %>% gsub("ui_bubble_rating bubble_", "", .) %>% as.integer()
-  date <- reviews %>% html_nodes(".ratingDate") %>% html_attr("title")
-  review <- reviews %>% html_nodes(".entry .partial_entry") %>% html_text()
-  rev2 <- reviews %>% html_nodes(".mgrRspnInline .entry .partial_entry") %>% html_text()
-  review  <- setdiff(review,rev2)
+  reviews <- url %>% read_html()
+  id <- reviews %>% html_nodes(".oETBfkHU") %>% html_attr("data-reviewid")
+  usuario <- reviews %>% html_nodes("._1r_My98y") %>% html_text()
+  quote <- reviews %>% html_nodes(".glasR4aX") %>% html_text()
+  rating <- reviews %>% html_nodes(".nf9vGX55 .ui_bubble_rating") %>% html_attrs() %>% gsub("ui_bubble_rating bubble_", "", .) %>% as.integer()
+  review <- reviews %>% html_nodes(".IRsGHoPm") %>% html_text()
   quote <- gsub("[\n\r\t\"]", " ", quote)
   quote <- iconv(quote,to="UTF-8")
   review <- gsub("[\n\r\t\"]", " ", review)
   review <- iconv(review,to="UTF-8")
-  lugar <- gsub("[\n\r\t\"]", "", lugar)
-  lugar <- iconv(lugar,to="UTF-8")
   usuario <- gsub("[\n\r\t\"]", "", usuario)
   usuario <- iconv(usuario,to="UTF-8")
-  try(temp.tableout <- data.frame("Region"=region,"Atraccion"=atrac,id, lugar, usuario, quote, rating, date, review))
-  write.table(temp.tableout,file="C:/Temp/comm_eng.txt",row.names=F,col.names=F,append=T,sep=",")}}
+  try(temp.tableout <- data.frame("Region"=region,"Atraccion"=atrac,id, usuario, quote, rating, review))
+  write.table(temp.tableout,file="hotel_eng.txt",row.names=F,col.names=F,append=T,sep=",")}}
 
 for (i in 1:4) {temp.atrac<-colec_hotel(lista_eng[i,8],lista_eng[i,3],lista_eng[i,4],lista_eng[i,6],lista_eng[i,7])}
 
@@ -59,7 +64,6 @@ for (i in 1:4) {temp.atrac<-colec_hotel(lista_eng[i,8],lista_eng[i,3],lista_eng[
 ## web1 es la primera parte de la dirección 
 ## web2 es la segunda parte de la dirección 
 ## como resultado r debe generar un dataframe con todas las columnas necesarias 
-## CODIGO PARA DESCARGA DE COMENTARIOS EN INGLÉS
 
 colect_rest<-function(n,region,atrac,web1,web2) {
   looping<-c("")
@@ -67,28 +71,20 @@ colect_rest<-function(n,region,atrac,web1,web2) {
   looping<-c(looping,tmp)}
   tableout <- data.frame()
   for(i in looping){url <- paste (web1,i,web2,sep="")
-  reviews2 <- url %>% read_html() %>% html_nodes("#REVIEWS .listContainer")
-  usuario <- reviews2 %>% html_nodes(".username") %>% html_text()
-  lugar <- reviews2 %>% html_nodes(".member_info") %>% html_text()
-  tmpx1<-sapply(usuario,nchar)
-  lugar<-substr(lugar,tmpx1+1,tmpx1+30)
-  lugar = gsub("[[:digit:]]", "", lugar)
-  reviews <- url %>% read_html() %>% html_nodes("#REVIEWS .innerBubble")
-  id <- reviews %>% html_node(".quote a") %>% html_attr("id")
-  quote <- reviews %>% html_node(".quote span") %>% html_text()
-  rating <- reviews %>% html_node(".rating .ui_bubble_rating") %>% html_attrs() %>% gsub("ui_bubble_rating bubble_", "", .) %>% as.integer()
-  date <- reviews %>% html_node(".rating .ratingDate") %>% html_attr("title")
-  review <- reviews %>% html_node(".entry .partial_entry") %>% html_text()
+  reviews <- url %>% read_html()
+  id <- reviews %>% html_nodes(".oETBfkHU") %>% html_attr("data-reviewid")
+  usuario <- reviews %>% html_nodes("._1r_My98y") %>% html_text()
+  quote <- reviews %>% html_nodes(".glasR4aX") %>% html_text()
+  rating <- reviews %>% html_nodes(".nf9vGX55 .ui_bubble_rating") %>% html_attrs() %>% gsub("ui_bubble_rating bubble_", "", .) %>% as.integer()
+  review <- reviews %>% html_nodes(".IRsGHoPm") %>% html_text()
   quote <- gsub("[\n\r\t\"]", " ", quote)
   quote <- iconv(quote,to="UTF-8")
   review <- gsub("[\n\r\t\"]", " ", review)
   review <- iconv(review,to="UTF-8")
-  lugar <- gsub("[\n\r\t\"]", "", lugar)
-  lugar <- iconv(lugar,to="UTF-8")
   usuario <- gsub("[\n\r\t\"]", "", usuario)
   usuario <- iconv(usuario,to="UTF-8")
-  temp.tableout <- data.frame("Region"=region,"Atraccion"=atrac,id, lugar, usuario, quote, rating, date, review)
-  write.table(temp.tableout,file="C:/Temp/comm_eng.txt",row.names=F,col.names=F,append=T,sep=",")}}
+  try(temp.tableout <- data.frame("Region"=region,"Atraccion"=atrac,id, usuario, quote, rating, review))
+  write.table(temp.tableout,file="rest_eng.txt",row.names=F,col.names=F,append=T,sep=",")}}
 
 for (i in 5:12) {temp.atrac<-colect_rest(lista_eng[i,8],lista_eng[i,3],lista_eng[i,4],lista_eng[i,6],lista_eng[i,7])}
 
